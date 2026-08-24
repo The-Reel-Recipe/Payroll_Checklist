@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run payroll — checklist</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#E8E7E1;
+  --card:#FFFFFF;
+  --head:#111114;
+  --ink:#17181A; --ink-2:#6A6E74; --ink-3:#9A9EA4;
+  --line:#EDECEA; --line-2:#F4F3F1;
+  --badge:#F1F1EF;
+  --purple:#6A5AE0; --purple-soft:#EEEBFC; --purple-deep:#463BB0;
+  --lime:#C4F04A; --lime-ink:#1B2606;
+  --red:#E0483D; --red-soft:#FCEBE9; --red-deep:#A8352C;
+  --amber:#C88A1E; --amber-soft:#FBF3E1; --amber-deep:#7C5610;
+  --r:22px; --r-row:16px; --r-sm:11px;
+  --sh-card:0 1px 2px rgba(20,20,25,.05), 0 18px 44px rgba(20,20,25,.10);
+  --sh-row:0 1px 2px rgba(20,20,25,.05), 0 8px 22px rgba(20,20,25,.07);
+  --ease:cubic-bezier(.2,.7,.3,1);
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:16px;line-height:1.5;overflow-x:hidden;
+  padding:clamp(1rem,4vw,3rem) 1rem 5rem;-webkit-font-smoothing:antialiased}
+
+.card{width:100%;max-width:62rem;margin-inline:auto;background:linear-gradient(180deg,#fff 0%,#fff 78%,#F7F6FD 100%);
+  border-radius:var(--r);box-shadow:var(--sh-card);overflow:hidden}
+
+/* ---------- header ---------- */
+.head{background:var(--head);color:#fff;padding:1.15rem 1.25rem 1.2rem}
+.head-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.head h1{font-size:1.4rem;font-weight:750;letter-spacing:-.02em;margin:0}
+.head .sub{margin:.25rem 0 0;font-size:.83rem;color:#A9ABB2;font-weight:450}
+.restart{flex:0 0 auto;width:2.15rem;height:2.15rem;border-radius:50%;border:0;cursor:pointer;
+  background:#2A2A2F;color:#C9CACE;display:grid;place-items:center;transition:.2s var(--ease)}
+.restart:hover{background:#3A3A41;color:#fff;transform:rotate(-40deg)}
+.restart:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.restart svg{width:1.15rem;height:1.15rem}
+
+.prog{display:flex;align-items:center;gap:.7rem;margin-top:1.15rem}
+.prog .emoji{font-size:1.35rem;line-height:1;filter:saturate(1.1)}
+.track{flex:1;height:.7rem;background:#333338;border-radius:99px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--purple);border-radius:99px;transition:width .5s var(--ease)}
+.pct{font-size:1rem;font-weight:750;font-variant-numeric:tabular-nums;min-width:3ch;text-align:right}
+
+/* ---------- body ---------- */
+.body-pad{padding:.5rem .7rem 1.1rem}
+.phase{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);
+  padding:1.1rem .6rem .35rem}
+.phase:first-child{padding-top:.7rem}
+
+ul.tasks{list-style:none;margin:0;padding:0}
+li.task{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.4rem;min-width:0;
+  border-radius:var(--r-row);padding:.15rem;transition:background .2s var(--ease),box-shadow .25s var(--ease)}
+ul.tasks li.task:not(:last-child)::after{content:"";grid-column:1 / -1;height:1px;background:var(--line-2);margin:0 .55rem}
+li.task.open{background:#fff;box-shadow:var(--sh-row)}
+li.task.open::after,li.task:hover::after{opacity:0}
+li.task:hover:not(.open){background:var(--line-2)}
+
+.row{display:flex;align-items:center;gap:.85rem;width:100%;min-width:0;text-align:left;cursor:pointer;
+  background:transparent;border:0;padding:.7rem .55rem;font-family:var(--sans);border-radius:var(--r-row)}
+.row:focus-visible{outline:3px solid var(--purple);outline-offset:-3px}
+.ic{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--badge);
+  display:grid;place-items:center;color:#3A3D42;transition:.2s var(--ease)}
+.ic svg{width:1.25rem;height:1.25rem}
+li.task.danger .ic{background:var(--red-soft);color:var(--red-deep)}
+li.task.done .ic{background:var(--lime);color:var(--lime-ink)}
+.txt{min-width:0}
+.txt .t{display:block;font-size:.98rem;font-weight:650;color:var(--ink);line-height:1.3}
+.txt .s{display:block;font-size:.82rem;color:var(--ink-2);line-height:1.35;margin-top:.1rem;
+  overflow:hidden;text-overflow:ellipsis}
+li.task.done .txt .t,li.task.done .txt .s{color:var(--ink-3);text-decoration:line-through;text-decoration-color:#D6D5D2}
+
+.mark{flex:0 0 auto;width:2.25rem;height:2.25rem;margin-right:.4rem;border-radius:50%;cursor:pointer;
+  background:#fff;border:2px solid #D6D5CF;display:grid;place-items:center;color:#C0C3C8;
+  transition:background .2s var(--ease),border-color .2s var(--ease),transform .15s var(--ease)}
+.mark:hover{border-color:var(--purple);color:var(--purple);transform:scale(1.08)}
+.mark:active{transform:scale(.94)}
+.mark:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.mark svg{width:1.2rem;height:1.2rem}
+.mark .chev{display:none}
+.mark .tick{opacity:0;transform:scale(.4);transition:opacity .15s var(--ease),transform .15s var(--ease)}
+.mark:hover .tick{opacity:.5;transform:scale(.85)}
+li.task.done .mark{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
+li.task.done .mark .tick{opacity:1;transform:scale(1)}
+.mark.pop{animation:markpop .5s cubic-bezier(.34,1.56,.64,1)}
+.mark.pop .tick{animation:tickpop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes markpop{0%{transform:scale(.82)}55%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes tickpop{0%{opacity:0;transform:scale(0) rotate(-20deg)}60%{opacity:1;transform:scale(1.3) rotate(5deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+
+/* ---------- how-to reveal ---------- */
+.how{grid-column:1 / -1;min-width:0;display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease)}
+li.task.open .how{grid-template-rows:1fr}
+.how-in{overflow:hidden;min-height:0;min-width:0}
+.how-pad{padding:.15rem 1rem 1.1rem 4rem}
+ol.do{list-style:none;margin:.3rem 0 0;padding:0;counter-reset:d}
+ol.do li{counter-increment:d;position:relative;padding:.3rem 0 .3rem 1.7rem;font-size:.9rem;color:var(--ink-2);line-height:1.5}
+ol.do li::before{content:counter(d);position:absolute;left:0;top:.32rem;width:1.2rem;height:1.2rem;display:grid;place-items:center;
+  font-size:.66rem;font-weight:700;color:var(--purple-deep);background:var(--purple-soft);border-radius:50%}
+ol.do li b{color:var(--ink);font-weight:650}
+.ui{font-weight:650;color:var(--ink);box-shadow:inset 0 -.5em 0 var(--purple-soft)}
+.f{font-size:.86em;background:#F2F1EF;border:1px solid var(--line);color:#3A3D42;padding:.05em .4em;border-radius:6px;white-space:nowrap}
+.code{font-size:.86em;font-weight:700;background:var(--purple-soft);border:1px solid #DAD3F7;color:var(--purple-deep);padding:.05em .45em;border-radius:6px;white-space:nowrap}
+.set{color:var(--purple-deep);font-weight:700}
+
+.note{margin-top:.75rem;padding:.6rem .8rem;border-radius:var(--r-sm);font-size:.85rem;line-height:1.5}
+.note b{display:block;font-weight:700;margin-bottom:.1rem;font-size:.82rem}
+.note.warn{background:var(--amber-soft);color:var(--amber-deep)}
+.note.stop{background:var(--red-soft);color:var(--red-deep)}
+.note.tip{background:var(--purple-soft);color:var(--purple-deep)}
+
+/* screenshot slot */
+.shot{margin:.8rem 0 0}
+.shot img:not([hidden]){display:block;max-width:100%;height:auto;border-radius:var(--r-sm);border:1px solid var(--line)}
+.shot .ph{border:1.5px dashed #D6D4CE;border-radius:var(--r-sm);background:#FAFAF8;padding:1rem .9rem;text-align:center}
+.shot .ph .cam{font-size:1.2rem;opacity:.7}
+.shot .ph .lab{display:block;font-size:.82rem;color:var(--ink-2);line-height:1.45;margin-top:.3rem}
+.shot .ph .lab b{color:var(--ink)}
+.shot .ph .fn{display:inline-block;max-width:100%;margin-top:.5rem;font-size:.72rem;color:var(--purple-deep);
+  background:var(--purple-soft);border:1px solid #DAD3F7;border-radius:6px;padding:.15em .5em;word-break:break-all}
+
+/* point of no return */
+.pnr{display:flex;align-items:center;gap:.6rem;padding:1rem .7rem .35rem}
+.pnr .ln{flex:1;height:1px;background:#DFDDD7}
+.pnr .lab{font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--red);
+  display:inline-flex;align-items:center;gap:.35rem}
+.pnr .lab::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red)}
+
+.foot{padding:.4rem 1.25rem 1.2rem;font-size:.75rem;color:var(--ink-3);text-align:center}
+
+/* confetti */
+.confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:60;pointer-events:none;border-radius:1px;will-change:transform,opacity}
+
+@media (min-width:680px){
+  .head{padding:1.5rem 2rem 1.6rem}
+  .head h1{font-size:1.65rem}
+  .body-pad{padding:.6rem 1.4rem 1.7rem}
+  .phase{padding:1.35rem 1.1rem .5rem}
+  .row{padding:.95rem .9rem}
+  .ic{width:2.85rem;height:2.85rem}
+  .txt .t{font-size:1.05rem}
+  .txt .s{font-size:.86rem}
+  .how-pad{padding:.2rem 1.2rem 1.2rem 4.7rem;max-width:54rem}
+}
+@media (max-width:400px){ .how-pad{padding-left:1rem} }
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  body{background:#fff;padding:0}
+  .card{box-shadow:none;max-width:none}
+  .restart,.mark{display:none}
+  .how{grid-template-rows:1fr!important}
+  li.task{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<main class="card">
+  <div class="head">
+    <div class="head-top">
+      <div>
+        <h1>Run payroll</h1>
+        <p class="sub">The monthly close · 9 steps, in order</p>
+      </div>
+      <button class="restart" id="restart" type="button" title="Start a new run" aria-label="Start a new run">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>
+      </button>
+    </div>
+    <div class="prog">
+      <span class="emoji" id="emoji">🚀</span>
+      <span class="track"><i id="fill"></i></span>
+      <span class="pct" id="pct">0%</span>
+    </div>
+  </div>
+
+  <div class="body-pad">
+
+    <p class="phase">Before the run · last day or two</p>
+    <ul class="tasks">
+
+      <li class="task" data-i="0">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+          <span class="txt"><span class="t">Everything's approved</span><span class="s">Managers approve OT, leaves &amp; KPIs — you check. You approve the adjustments.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>In the <span class="ui">Payroll</span> interface, open <span class="ui">Overtime to approve</span> and check nothing's left on <span class="f">Pending</span>. Leaves &amp; KPIs are the managers' to approve (in <span class="ui">My Team</span>) — just make sure they're done.</li>
+            <li><b>You</b> approve the <span class="ui">Bonuses, advances &amp; penalties</span> page: open each and set <span class="f">Approval Status</span> to <span class="set">Approved</span>.</li>
+          </ol>
+          <div class="note stop"><b>Anything left Pending blocks that person's payslip.</b>Make sure leaves are approved <i>before</i> the attendance import — a day off that's still Pending gets charged as absent.</div>
+          <figure class="shot"><img src="Screenshots/ss01.png" alt="Pending approvals" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The approvals page in the interface, with anything still Pending showing.</span><span class="fn">screenshots/01-pending-approvals.png</span></div></figure>
+        </div></div></div>
+      </li>
+
+      <li class="task danger" data-i="1">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+          <span class="txt"><span class="t">Set up this month's calendar</span><span class="s">Mark holidays, closures and any late-opening days.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>In the interface, open the <span class="ui">Working Days Calendar</span> and find the day by its <span class="f">Date</span>.</li>
+            <li><b>Holiday / office closed?</b> Untick <span class="f">Is Working Day</span> and fill <span class="f">Closure Reason</span>.</li>
+            <li><b>Opened late?</b> Put the minutes in <span class="f">Extra Grace Today (min)</span> — e.g. <span class="code">30</span>.</li>
+            <li><b>No lateness charged that day?</b> Untick <span class="f">Charge Lateness Today</span>.</li>
+          </ol>
+          <div class="note warn"><b>This touches everyone at once.</b>An unmarked holiday charges the whole company as absent. Always leave a reason.</div>
+          <figure class="shot"><img src="Screenshots/ss02.png" alt="Working Days Calendar" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> One Working Days Calendar record.</span><span class="fn">screenshots/02-working-days-calendar.png</span></div></figure>
+        </div></div></div>
+      </li>
+
+      <li class="task danger" data-i="2">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10"/><path d="M18 8l4 4-4 4M22 12H9"/></svg></span>
+          <span class="txt"><span class="t">Check every leaver's exit date</span><span class="s">Date first, then tick. Match it to their last punch.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>In the interface, open the leaver's <span class="ui">Contract</span>. Fill <span class="f">Termination Date</span> = their true last working day, <b>then</b> tick <span class="f">Contract Terminated</span>.</li>
+            <li>Check the date against their <b>last fingerprint punch</b> before paying.</li>
+          </ol>
+          <div class="note stop"><b>Date FIRST, then the tick.</b>Tick with the date empty and the system stamps <b>today</b> — closing their pay on the wrong day.</div>
+        </div></div></div>
+      </li>
+
+      <li class="task danger" data-i="3">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 6.5L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-5.5A2 2 0 0 0 16.8 5H7.2a2 2 0 0 0-1.7 1.5z"/></svg></span>
+          <span class="txt"><span class="t">Import the attendance</span><span class="s">Open TRR Attendance and click Update attendance.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>Open the <span class="ui">TRR Attendance</span> page.</li>
+            <li>Click <span class="set">Update attendance</span> — it reads the machine and saves straight to Airtable. Running it again is safe.</li>
+          </ol>
+          <div class="note stop"><b>The one hard deadline.</b>If attendance isn't imported, everyone is paid in full with no absences taken off.</div>
+          <figure class="shot"><img src="Screenshots/ss04.png" alt="TRR Attendance page" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The TRR Attendance page with the <b>Update attendance</b> button.</span><span class="fn">Screenshots/ss04.png</span></div></figure>
+        </div></div></div>
+      </li>
+
+    </ul>
+
+    <p class="phase">Check the payslips · from the 1st (they build on their own)</p>
+    <ul class="tasks">
+
+      <li class="task" data-i="5">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span>
+          <span class="txt"><span class="t">Everyone has a payslip</span><span class="s">They build automatically — just check nobody's missing.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>The system builds commission and payslips <b>automatically on the 1st</b> — you don't press anything.</li>
+            <li>In the interface, open the <span class="ui">Payslips</span> page and check everyone has one.</li>
+          </ol>
+        </div></div></div>
+      </li>
+
+      <li class="task" data-i="7">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/></svg></span>
+          <span class="txt"><span class="t">Clear every blocker</span><span class="s">Set them to Under Review first, then fix any blocker.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>In the interface, set each payslip's <span class="f">Payslip Status</span> to <span class="set">Under Review</span>. A payslip only shows its blockers <b>after</b> it's Under Review — a problem one turns <span class="f">Blocked</span>.</li>
+            <li>On a <span class="f">Blocked</span> one, read the <span class="f">Blockers</span> — the message says what's wrong.</li>
+            <li>Fix the <b>cause</b> (approve the bonus, add a missing date…). It clears itself — no button.</li>
+          </ol>
+          <div class="note tip"><b>A block is protection, not a fault.</b>It refuses to pay a wrong number that would look right.</div>
+          <figure class="shot"><img src="Screenshots/ss08.png" alt="Blockers column" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> A payslip in the interface showing a real blocker message.</span><span class="fn">screenshots/08-blockers-column.png</span></div></figure>
+        </div></div></div>
+      </li>
+
+      <li class="task" data-i="8">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
+          <span class="txt"><span class="t">Totals look right</span><span class="s">Give the Net Pay a quick look.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>On the <span class="ui">Payslips</span> page, look down the <span class="f">Net Pay</span> column and make sure the numbers look right.</li>
+            <li>Anything that looks off — open that payslip and check it before approving.</li>
+          </ol>
+        </div></div></div>
+      </li>
+
+    </ul>
+
+    <div class="pnr"><span class="ln"></span><span class="lab">Point of no return</span><span class="ln"></span></div>
+
+    <p class="phase">Approve &amp; pay · one-way</p>
+    <ul class="tasks">
+
+      <li class="task danger" data-i="9">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="txt"><span class="t">Approve — the figures freeze</span><span class="s">Approve the clean ones. Numbers lock.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>On the <span class="ui">Payslips</span> page, set each clean payslip (not <span class="f">Blocked</span>) to <span class="set">Approved</span>.</li>
+            <li>Anything still wrong snaps back to <span class="f">Blocked</span> — your safety net.</li>
+            <li><span class="set">Approved</span> takes a snapshot and freezes it. Nothing is sent yet.</li>
+          </ol>
+          <div class="note warn"><b>Check before you approve.</b>Once locked, a fix means a correction next month, not an edit.</div>
+          <figure class="shot"><img src="Screenshots/ss10.png" alt="Status flow" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The Payslip Status dropdown in the interface: Draft → Under Review → Approved → Paid.</span><span class="fn">screenshots/10-status-flow.png</span></div></figure>
+        </div></div></div>
+      </li>
+
+      <li class="task danger" data-i="10">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></span>
+          <span class="txt"><span class="t">Mark Paid — the employee is emailed</span><span class="s">Only after the money's out. This sends the email.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>After you've <b>actually transferred</b> the salaries, set the payslip's <span class="f">Payslip Status</span> to <span class="set">Paid</span> in the interface.</li>
+            <li>That emails each person their full breakdown.</li>
+          </ol>
+          <div class="note stop"><b>First live month only.</b>Turn the payslip-email automation <b>on</b> right before this — it's kept off until now so nobody's emailed by accident. After the first month it stays on.</div>
+        </div></div></div>
+      </li>
+
+    </ul>
+  </div>
+
+  <p class="foot">Tap a step to open the how-to · tap the circle on the right to check it off · progress saves on this device</p>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "trr-payroll-run-2026";
+  var tasks = [].slice.call(document.querySelectorAll("li.task"));
+  var total = tasks.length;
+  var fill = document.getElementById("fill");
+  var pct = document.getElementById("pct");
+  var emoji = document.getElementById("emoji");
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var wasComplete = false;
+
+  function save(){
+    var s = tasks.map(function(t){ return t.classList.contains("done") ? 1 : 0; });
+    try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+  }
+  function refresh(){
+    var n = tasks.filter(function(t){ return t.classList.contains("done"); }).length;
+    var p = Math.round(n/total*100);
+    fill.style.width = p + "%";
+    pct.textContent = p + "%";
+    emoji.textContent = p===100 ? "🎉" : p>=50 ? "👏" : "🚀";
+    if(p===100 && !wasComplete) celebrate();
+    wasComplete = (p===100);
+  }
+  tasks.forEach(function(t){
+    var row = t.querySelector(".row");
+    var mark = t.querySelector(".mark");
+    row.addEventListener("click", function(){
+      var open = t.classList.toggle("open");
+      row.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    mark.addEventListener("click", function(e){
+      e.stopPropagation();
+      var done = t.classList.toggle("done");
+      mark.setAttribute("aria-pressed", done ? "true" : "false");
+      if(done){ mark.classList.remove("pop"); void mark.offsetWidth; mark.classList.add("pop"); }
+      save(); refresh();
+    });
+    mark.addEventListener("animationend", function(){ mark.classList.remove("pop"); });
+  });
+  try{
+    var saved = JSON.parse(localStorage.getItem(KEY) || "[]");
+    tasks.forEach(function(t,i){ if(saved[i]){ t.classList.add("done"); t.querySelector(".mark").setAttribute("aria-pressed","true"); } });
+  }catch(e){}
+  wasComplete = tasks.every(function(t){ return t.classList.contains("done"); });
+  refresh();
+
+  document.getElementById("restart").addEventListener("click", function(){
+    if(!confirm("Clear every tick and start a fresh month?")) return;
+    tasks.forEach(function(t){ t.classList.remove("done"); t.querySelector(".mark").setAttribute("aria-pressed","false"); });
+    wasComplete = false; save(); refresh();
+  });
+
+  function celebrate(){
+    if(reduce) return;
+    var colors = ["#6A5AE0","#1B1450","#B7AEF3","#C4F04A","#FFFFFF"];
+    for(var i=0;i<70;i++){
+      (function(){
+        var c = document.createElement("i");
+        c.className = "confetti";
+        c.style.background = colors[i % colors.length];
+        c.style.left = Math.random()*100 + "vw";
+        var dx = (Math.random()*2-1)*140;
+        var rot = Math.random()*720 - 360;
+        var dur = 2200 + Math.random()*1600;
+        c.style.opacity = "1";
+        if(Math.random()<.5) c.style.borderRadius = "50%";
+        document.body.appendChild(c);
+        c.animate([
+          {transform:"translate(0,0) rotate(0deg)", opacity:1},
+          {transform:"translate("+dx+"px,"+(window.innerHeight+40)+"px) rotate("+rot+"deg)", opacity:1}
+        ], {duration:dur, easing:"cubic-bezier(.2,.6,.4,1)", delay:Math.random()*250}).onfinish = function(){ c.remove(); };
+      })();
+    }
+  }
+})();
+</script>
+</body>
+</html>
