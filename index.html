@@ -166,7 +166,7 @@ ol.do li b{color:var(--ink);font-weight:650}
     <div class="head-top">
       <div>
         <h1>Run payroll</h1>
-        <p class="sub">The monthly close · 9 steps, in order</p>
+        <p class="sub">The monthly close · 10 steps, in order</p>
       </div>
       <button class="restart" id="restart" type="button" title="Start a new run" aria-label="Start a new run">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>
@@ -251,20 +251,41 @@ ol.do li b{color:var(--ink);font-weight:650}
 
     </ul>
 
-    <p class="phase">Check the payslips · from the 1st (they build on their own)</p>
+    <p class="phase">Generate the payslips · when the check says ready</p>
     <ul class="tasks">
 
-      <li class="task" data-i="5">
+      <li class="task danger" data-i="5">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span>
-          <span class="txt"><span class="t">Everyone has a payslip</span><span class="s">They build automatically — just check nobody's missing.</span></span>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+          <span class="txt"><span class="t">Tick the box to generate</span><span class="s">Read the green/red check first, then tick Generate Payslips Now.</span></span>
         </button>
         <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
           <ol class="do">
-            <li>The system builds commission and payslips <b>automatically on the 1st</b> — you don't press anything.</li>
-            <li>In the interface, open the <span class="ui">Payslips</span> page and check everyone has one.</li>
+            <li>In the <span class="ui">Payroll</span> interface, open the <span class="ui">Run Payslips</span> page and find this month.</li>
+            <li>Read <span class="f">Payslip Readiness</span>. <b>🟢 "Inputs ready"</b> — go on. <b>🔴 "Not ready"</b> — it lists what's missing (overtime pending, KPIs not generated…); fix those first, and it turns green on its own.</li>
+            <li>When green, tick <span class="f">Generate Payslips Now</span>. The payslips build, then the box <b>unticks itself</b> — that means it finished.</li>
           </ol>
+          <div class="note tip"><b>Safe to re-tick.</b>Running it again never duplicates and never touches an already-approved payslip. Tick again any time you've changed something.</div>
+          <figure class="shot"><img src="Screenshots/ss05.png" alt="Run Payslips page" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The <b>Run Payslips</b> page: the readiness message and the <b>Generate Payslips Now</b> checkbox.</span><span class="fn">Screenshots/ss05.png</span></div></figure>
+        </div></div></div>
+      </li>
+
+      <li class="task danger" data-i="6">
+        <button class="row" aria-expanded="false">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span>
+          <span class="txt"><span class="t">Read the card check &amp; everyone has a payslip</span><span class="s">After it runs, the month tells you who to fix.</span></span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <ol class="do">
+            <li>On the same <span class="ui">Run Payslips</span> page, read <span class="f">Card Check Result</span>. <b>✅ "All clean"</b> — nothing to do. <b>⚠ names listed</b> — each says the problem (no salary card, or attendance not imported).</li>
+            <li>For anyone named <b>"no salary card"</b>: open the <span class="ui">Salary cards</span> page. Either they're a real paid person who needs a card (usually add their contract and the card appears), or they don't get paid here — tick <span class="f">Payroll Exclude</span> on their employee record.</li>
+            <li>Fix the named people, then <b>tick Generate Payslips Now again</b> and re-read — it should go ✅.</li>
+            <li>Finally, open the <span class="ui">Payslips</span> page and check everyone expected has one.</li>
+          </ol>
+          <div class="note stop"><b>The card check catches silent overpay.</b>"Attendance not imported" or "no salary card" means someone would be paid wrong. Clear the list before approving.</div>
+          <figure class="shot"><img src="Screenshots/ss06.png" alt="Card Check Result" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The <b>Card Check Result</b> field showing an example ✅ clean and a ⚠ with names.</span><span class="fn">Screenshots/ss06.png</span></div></figure>
         </div></div></div>
       </li>
 
@@ -347,7 +368,7 @@ ol.do li b{color:var(--ink);font-weight:650}
 <script>
 (function(){
   "use strict";
-  var KEY = "trr-payroll-run-2026";
+  var KEY = "trr-payroll-run-2026-v2";
   var tasks = [].slice.call(document.querySelectorAll("li.task"));
   var total = tasks.length;
   var fill = document.getElementById("fill");
