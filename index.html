@@ -3,20 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Run payroll — checklist</title>
+<title>Run payroll — step by step</title>
 <style>
 :root{
   color-scheme: light;
   --bg:#E8E7E1;
   --card:#FFFFFF;
   --head:#111114;
-  --ink:#17181A; --ink-2:#6A6E74; --ink-3:#9A9EA4;
+  --ink:#17181A; --ink-2:#5F646B; --ink-3:#93979E;
   --line:#EDECEA; --line-2:#F4F3F1;
   --badge:#F1F1EF;
-  --purple:#6A5AE0; --purple-soft:#EEEBFC; --purple-deep:#463BB0;
+  --purple:#6A5AE0; --purple-soft:#EEEBFC; --purple-deep:#463BB0; --purple-line:#DAD3F7;
   --lime:#C4F04A; --lime-ink:#1B2606;
   --red:#E0483D; --red-soft:#FCEBE9; --red-deep:#A8352C;
   --amber:#C88A1E; --amber-soft:#FBF3E1; --amber-deep:#7C5610;
+  --teal-soft:#E2F1EF; --teal-deep:#0A4B45;
   --r:22px; --r-row:16px; --r-sm:11px;
   --sh-card:0 1px 2px rgba(20,20,25,.05), 0 18px 44px rgba(20,20,25,.10);
   --sh-row:0 1px 2px rgba(20,20,25,.05), 0 8px 22px rgba(20,20,25,.07);
@@ -43,7 +44,15 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family
 .restart:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
 .restart svg{width:1.15rem;height:1.15rem}
 
-.prog{display:flex;align-items:center;gap:.7rem;margin-top:1.15rem}
+.monthbar{display:flex;align-items:center;gap:.55rem;margin-top:1rem;flex-wrap:wrap}
+.monthbar label{font-size:.78rem;color:#A9ABB2;font-weight:600}
+.monthbar input{font-family:var(--sans);font-size:.9rem;font-weight:700;color:#fff;background:#2A2A2F;
+  border:1.5px solid #3A3A41;border-radius:9px;padding:.35rem .6rem;width:7.5rem}
+.monthbar input::placeholder{color:#71757C;font-weight:500}
+.monthbar input:focus-visible{outline:3px solid var(--purple);outline-offset:1px;border-color:var(--purple)}
+.monthbar .hint{font-size:.74rem;color:#71757C}
+
+.prog{display:flex;align-items:center;gap:.7rem;margin-top:1rem}
 .prog .emoji{font-size:1.35rem;line-height:1;filter:saturate(1.1)}
 .track{flex:1;height:.7rem;background:#333338;border-radius:99px;overflow:hidden}
 .track i{display:block;height:100%;width:0;background:var(--purple);border-radius:99px;transition:width .5s var(--ease)}
@@ -51,9 +60,27 @@ body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family
 
 /* ---------- body ---------- */
 .body-pad{padding:.5rem .7rem 1.1rem}
+
+/* orientation panel */
+.brief{margin:.9rem .55rem 0;border:1.5px solid var(--purple-line);background:var(--purple-soft);
+  border-radius:var(--r-row);overflow:hidden}
+.brief > summary{list-style:none;cursor:pointer;padding:.85rem 1rem;display:flex;align-items:center;gap:.6rem;
+  font-weight:700;font-size:.95rem;color:var(--purple-deep)}
+.brief > summary::-webkit-details-marker{display:none}
+.brief > summary .caret{margin-left:auto;transition:transform .25s var(--ease);flex:0 0 auto}
+.brief[open] > summary .caret{transform:rotate(90deg)}
+.brief > summary > svg{width:1.15rem;height:1.15rem;flex:0 0 auto}
+.brief > summary:focus-visible{outline:3px solid var(--purple);outline-offset:-3px}
+.brief-in{padding:0 1rem 1.05rem;font-size:.9rem;color:#3E3A5C;line-height:1.55}
+.brief-in p{margin:.5rem 0}
+.brief-in h4{margin:1rem 0 .35rem;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;color:var(--purple-deep)}
+.brief-in ul{margin:.35rem 0;padding-left:1.1rem}
+.brief-in li{margin:.25rem 0}
+.brief-in b{color:#2A2545}
+
 .phase{font-size:.68rem;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);
-  padding:1.1rem .6rem .35rem}
-.phase:first-child{padding-top:.7rem}
+  padding:1.3rem .6rem .35rem}
+.phase span{color:var(--ink-2);text-transform:none;letter-spacing:0;font-weight:500;font-size:.78rem}
 
 ul.tasks{list-style:none;margin:0;padding:0}
 li.task{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.4rem;min-width:0;
@@ -66,16 +93,20 @@ li.task:hover:not(.open){background:var(--line-2)}
 .row{display:flex;align-items:center;gap:.85rem;width:100%;min-width:0;text-align:left;cursor:pointer;
   background:transparent;border:0;padding:.7rem .55rem;font-family:var(--sans);border-radius:var(--r-row)}
 .row:focus-visible{outline:3px solid var(--purple);outline-offset:-3px}
-.ic{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--badge);
-  display:grid;place-items:center;color:#3A3D42;transition:.2s var(--ease)}
-.ic svg{width:1.25rem;height:1.25rem}
-li.task.danger .ic{background:var(--red-soft);color:var(--red-deep)}
-li.task.done .ic{background:var(--lime);color:var(--lime-ink)}
+.num{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--badge);
+  display:grid;place-items:center;color:#3A3D42;font-weight:750;font-size:1rem;font-variant-numeric:tabular-nums;
+  transition:.2s var(--ease)}
+li.task.done .num{background:var(--lime);color:var(--lime-ink)}
 .txt{min-width:0}
 .txt .t{display:block;font-size:.98rem;font-weight:650;color:var(--ink);line-height:1.3}
-.txt .s{display:block;font-size:.82rem;color:var(--ink-2);line-height:1.35;margin-top:.1rem;
-  overflow:hidden;text-overflow:ellipsis}
+.txt .s{display:block;font-size:.82rem;color:var(--ink-2);line-height:1.35;margin-top:.15rem}
 li.task.done .txt .t,li.task.done .txt .s{color:var(--ink-3);text-decoration:line-through;text-decoration-color:#D6D5D2}
+
+.own{display:inline-block;font-size:.63rem;font-weight:750;letter-spacing:.07em;text-transform:uppercase;
+  padding:.13rem .42rem;border-radius:5px;margin-bottom:.22rem;border:1px solid transparent}
+.own.you{background:var(--purple-soft);color:var(--purple-deep);border-color:var(--purple-line)}
+.own.mgr{background:var(--amber-soft);color:var(--amber-deep);border-color:#EBDCB6}
+li.task.done .own{opacity:.5}
 
 .mark{flex:0 0 auto;width:2.25rem;height:2.25rem;margin-right:.4rem;border-radius:50%;cursor:pointer;
   background:#fff;border:2px solid #D6D5CF;display:grid;place-items:center;color:#C0C3C8;
@@ -84,7 +115,6 @@ li.task.done .txt .t,li.task.done .txt .s{color:var(--ink-3);text-decoration:lin
 .mark:active{transform:scale(.94)}
 .mark:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
 .mark svg{width:1.2rem;height:1.2rem}
-.mark .chev{display:none}
 .mark .tick{opacity:0;transform:scale(.4);transition:opacity .15s var(--ease),transform .15s var(--ease)}
 .mark:hover .tick{opacity:.5;transform:scale(.85)}
 li.task.done .mark{background:var(--lime);border-color:var(--lime);color:var(--lime-ink)}
@@ -98,64 +128,133 @@ li.task.done .mark .tick{opacity:1;transform:scale(1)}
 .how{grid-column:1 / -1;min-width:0;display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease)}
 li.task.open .how{grid-template-rows:1fr}
 .how-in{overflow:hidden;min-height:0;min-width:0}
-.how-pad{padding:.15rem 1rem 1.1rem 4rem}
+.how-pad{padding:.15rem 1rem 1.2rem 4rem}
+
+.where{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;font-size:.8rem;color:var(--ink-2);
+  background:var(--line-2);border:1px solid var(--line);border-radius:9px;padding:.45rem .65rem;margin:.2rem 0 .8rem}
+.where b{color:var(--ink);font-weight:700}
+.where .arrow{color:var(--ink-3)}
+
+.why{font-size:.88rem;color:var(--ink-2);margin:0 0 .7rem;line-height:1.55}
+.why b{color:var(--ink);font-weight:650}
+
 ol.do{list-style:none;margin:.3rem 0 0;padding:0;counter-reset:d}
-ol.do li{counter-increment:d;position:relative;padding:.3rem 0 .3rem 1.7rem;font-size:.9rem;color:var(--ink-2);line-height:1.5}
-ol.do li::before{content:counter(d);position:absolute;left:0;top:.32rem;width:1.2rem;height:1.2rem;display:grid;place-items:center;
+ol.do > li{counter-increment:d;position:relative;padding:.32rem 0 .32rem 1.7rem;font-size:.9rem;color:var(--ink-2);line-height:1.55}
+ol.do > li::before{content:counter(d);position:absolute;left:0;top:.36rem;width:1.2rem;height:1.2rem;display:grid;place-items:center;
   font-size:.66rem;font-weight:700;color:var(--purple-deep);background:var(--purple-soft);border-radius:50%}
-ol.do li b{color:var(--ink);font-weight:650}
+ol.do b{color:var(--ink);font-weight:650}
+ol.do ul{margin:.35rem 0 .1rem;padding-left:1.05rem;list-style:disc}
+ol.do ul li{padding:.16rem 0;font-size:.87rem}
+
 .ui{font-weight:650;color:var(--ink);box-shadow:inset 0 -.5em 0 var(--purple-soft)}
 .f{font-size:.86em;background:#F2F1EF;border:1px solid var(--line);color:#3A3D42;padding:.05em .4em;border-radius:6px;white-space:nowrap}
-.code{font-size:.86em;font-weight:700;background:var(--purple-soft);border:1px solid #DAD3F7;color:var(--purple-deep);padding:.05em .45em;border-radius:6px;white-space:nowrap}
+.code{font-size:.86em;font-weight:700;background:var(--purple-soft);border:1px solid var(--purple-line);color:var(--purple-deep);padding:.05em .45em;border-radius:6px;white-space:nowrap}
 .set{color:var(--purple-deep);font-weight:700}
 
-.note{margin-top:.75rem;padding:.6rem .8rem;border-radius:var(--r-sm);font-size:.85rem;line-height:1.5}
-.note b{display:block;font-weight:700;margin-bottom:.1rem;font-size:.82rem}
+.note{margin-top:.8rem;padding:.65rem .85rem;border-radius:var(--r-sm);font-size:.86rem;line-height:1.55}
+.note b{font-weight:700}
+.note > b:first-child{display:block;margin-bottom:.15rem;font-size:.83rem}
 .note.warn{background:var(--amber-soft);color:var(--amber-deep)}
 .note.stop{background:var(--red-soft);color:var(--red-deep)}
 .note.tip{background:var(--purple-soft);color:var(--purple-deep)}
 
-/* screenshot slot */
-.shot{margin:.8rem 0 0}
-.shot img:not([hidden]){display:block;max-width:100%;height:auto;border-radius:var(--r-sm);border:1px solid var(--line)}
-.shot .ph{border:1.5px dashed #D6D4CE;border-radius:var(--r-sm);background:#FAFAF8;padding:1rem .9rem;text-align:center}
-.shot .ph .cam{font-size:1.2rem;opacity:.7}
-.shot .ph .lab{display:block;font-size:.82rem;color:var(--ink-2);line-height:1.45;margin-top:.3rem}
-.shot .ph .lab b{color:var(--ink)}
-.shot .ph .fn{display:inline-block;max-width:100%;margin-top:.5rem;font-size:.72rem;color:var(--purple-deep);
-  background:var(--purple-soft);border:1px solid #DAD3F7;border-radius:6px;padding:.15em .5em;word-break:break-all}
+/* screenshot */
+.shot{margin:.9rem 0 0}
+.shot img{display:block;max-width:100%;height:auto;border-radius:var(--r-sm);border:1px solid #D9D8D4;background:#fff}
+.shot figcaption{font-size:.78rem;color:var(--ink-3);margin-top:.4rem;line-height:1.45}
+.shot figcaption b{color:var(--ink-2)}
 
 /* point of no return */
-.pnr{display:flex;align-items:center;gap:.6rem;padding:1rem .7rem .35rem}
+.pnr{display:flex;align-items:center;gap:.6rem;padding:1.3rem .7rem .35rem}
 .pnr .ln{flex:1;height:1px;background:#DFDDD7}
 .pnr .lab{font-size:.66rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--red);
   display:inline-flex;align-items:center;gap:.35rem}
 .pnr .lab::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--red)}
 
-.foot{padding:.4rem 1.25rem 1.2rem;font-size:.75rem;color:var(--ink-3);text-align:center}
+/* ---------- reference blocks ---------- */
+.ref{margin:1rem .55rem 0;border:1px solid var(--line);background:#fff;border-radius:var(--r-row);overflow:hidden}
+.ref > summary{list-style:none;cursor:pointer;padding:.9rem 1rem;display:flex;align-items:center;gap:.6rem;
+  font-weight:700;font-size:.95rem;color:var(--ink)}
+.ref > summary::-webkit-details-marker{display:none}
+.ref > summary:focus-visible{outline:3px solid var(--purple);outline-offset:-3px}
+.ref > summary .caret{margin-left:auto;transition:transform .25s var(--ease);flex:0 0 auto;color:var(--ink-3)}
+.ref[open] > summary .caret{transform:rotate(90deg)}
+.ref > summary > svg{width:1.15rem;height:1.15rem;flex:0 0 auto;color:var(--purple)}
+.ref > summary .cnt{font-size:.75rem;font-weight:600;color:var(--ink-3)}
+.ref-in{padding:0 1rem 1.1rem}
 
-/* confetti */
+/* message decoder */
+.search{width:100%;font-family:var(--sans);font-size:.9rem;color:var(--ink);background:var(--line-2);
+  border:1.5px solid var(--line);border-radius:10px;padding:.6rem .75rem;margin:0 0 .7rem}
+.search::placeholder{color:var(--ink-3)}
+.search:focus-visible{outline:3px solid var(--purple);outline-offset:1px;border-color:var(--purple)}
+.bk{border:1px solid var(--line);border-radius:10px;margin-bottom:.5rem;overflow:hidden;background:#fff}
+.bk > summary{list-style:none;cursor:pointer;padding:.6rem .75rem;font-size:.87rem;font-weight:650;color:var(--red-deep);
+  background:var(--red-soft);display:flex;gap:.5rem;align-items:flex-start}
+.bk > summary::-webkit-details-marker{display:none}
+.bk > summary:focus-visible{outline:3px solid var(--purple);outline-offset:-3px}
+.bk > summary .q{flex:0 0 auto;font-weight:800;opacity:.5}
+.bk-in{padding:.7rem .8rem .85rem;font-size:.87rem;color:var(--ink-2);line-height:1.55}
+.bk-in .means{margin:0 0 .5rem}
+.bk-in .means b{color:var(--ink)}
+.bk-in .fix{margin:0;padding-left:1.05rem}
+.bk-in .fix li{margin:.22rem 0}
+.bk-in .fix b{color:var(--ink)}
+.tagline{display:inline-block;font-size:.66rem;font-weight:750;letter-spacing:.06em;text-transform:uppercase;
+  padding:.12rem .42rem;border-radius:5px;margin-bottom:.5rem;border:1px solid transparent}
+.tagline.you{background:var(--purple-soft);color:var(--purple-deep);border-color:var(--purple-line)}
+.tagline.mgr{background:var(--amber-soft);color:var(--amber-deep);border-color:#EBDCB6}
+.tagline.help{background:var(--teal-soft);color:var(--teal-deep);border-color:#BFDFDA}
+.nohit{font-size:.87rem;color:var(--ink-3);padding:.6rem 0;text-align:center}
+
+/* table */
+.tbl-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:32rem;font-size:.86rem}
+th{text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);
+  padding:.6rem .75rem;background:var(--line-2);border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:.6rem .75rem;border-bottom:1px solid var(--line-2);vertical-align:top;color:var(--ink-2)}
+tbody tr:last-child td{border-bottom:0}
+td b{color:var(--ink);font-weight:650}
+
+/* glossary rows */
+.gl{border-bottom:1px solid var(--line-2)}
+.gl:last-child{border-bottom:0}
+.gl > summary{list-style:none;cursor:pointer;padding:.62rem .1rem;font-size:.9rem;font-weight:650;color:var(--ink);
+  display:flex;gap:.5rem;align-items:center}
+.gl > summary::-webkit-details-marker{display:none}
+.gl > summary:focus-visible{outline:3px solid var(--purple);outline-offset:-2px;border-radius:6px}
+.gl > summary .caret{margin-left:auto;color:var(--ink-3);transition:transform .2s var(--ease);flex:0 0 auto}
+.gl[open] > summary .caret{transform:rotate(90deg)}
+.gl p{margin:0 0 .7rem;padding-left:.1rem;font-size:.87rem;color:var(--ink-2);line-height:1.55}
+.gl p b{color:var(--ink)}
+
+.foot{padding:1.1rem 1.25rem 1.3rem;font-size:.75rem;color:var(--ink-3);text-align:center;line-height:1.65}
+.foot b{color:var(--ink-2)}
+
 .confetti{position:fixed;top:-12px;width:9px;height:14px;z-index:60;pointer-events:none;border-radius:1px;will-change:transform,opacity}
 
 @media (min-width:680px){
   .head{padding:1.5rem 2rem 1.6rem}
   .head h1{font-size:1.65rem}
   .body-pad{padding:.6rem 1.4rem 1.7rem}
-  .phase{padding:1.35rem 1.1rem .5rem}
+  .phase{padding:1.5rem 1.1rem .5rem}
   .row{padding:.95rem .9rem}
-  .ic{width:2.85rem;height:2.85rem}
+  .num{width:2.85rem;height:2.85rem;font-size:1.08rem}
   .txt .t{font-size:1.05rem}
   .txt .s{font-size:.86rem}
-  .how-pad{padding:.2rem 1.2rem 1.2rem 4.7rem;max-width:54rem}
+  .how-pad{padding:.2rem 1.2rem 1.3rem 4.7rem;max-width:56rem}
+  .brief,.ref{margin-left:1.05rem;margin-right:1.05rem}
 }
 @media (max-width:400px){ .how-pad{padding-left:1rem} }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{
   body{background:#fff;padding:0}
   .card{box-shadow:none;max-width:none}
-  .restart,.mark{display:none}
+  .restart,.mark,.search{display:none}
   .how{grid-template-rows:1fr!important}
+  .brief,.ref,.bk,.gl{border-color:#CCC}
   li.task{break-inside:avoid}
+  .shot img{max-width:62%}
 }
 </style>
 </head>
@@ -166,11 +265,16 @@ ol.do li b{color:var(--ink);font-weight:650}
     <div class="head-top">
       <div>
         <h1>Run payroll</h1>
-        <p class="sub">The monthly close · 10 steps, in order</p>
+        <p class="sub">Everything that has to be approved and checked, in the order you do it</p>
       </div>
-      <button class="restart" id="restart" type="button" title="Start a new run" aria-label="Start a new run">
+      <button class="restart" id="restart" type="button" title="Clear the ticks for this month" aria-label="Clear the ticks for this month">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v5h-5"/></svg>
       </button>
+    </div>
+    <div class="monthbar">
+      <label for="month">Month you're paying</label>
+      <input id="month" type="text" placeholder="Aug26" autocomplete="off" spellcheck="false" maxlength="12">
+      <span class="hint">Your ticks are saved per month</span>
     </div>
     <div class="prog">
       <span class="emoji" id="emoji">🚀</span>
@@ -181,217 +285,664 @@ ol.do li b{color:var(--ink);font-weight:650}
 
   <div class="body-pad">
 
-    <p class="phase">Before the run · last day or two</p>
+    <details class="brief" id="brief">
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        New to this? Read this first
+        <span class="caret"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </summary>
+      <div class="brief-in">
+        <p><b>What you are doing.</b> Once a month every employee gets a <b>payslip</b> — one record saying what they earned and what was taken off. The system builds those payslips for you. Your job is to make sure the information going in is complete and approved <i>before</i> you press the button, then to check what comes out.</p>
+
+        <h4>Two rules that matter more than anything else</h4>
+        <ul>
+          <li><b>Work only inside the Payroll menu</b> on the left of Airtable. Everything you need is one of those nine pages. Never edit the raw tables.</li>
+          <li><b>Nothing reaches an employee until the very last step.</b> You can build, rebuild and fix as often as you like. Only <b>Mark Paid</b> sends anything out.</li>
+        </ul>
+
+        <h4>What the system works out on its own</h4>
+        <p>You never calculate any of this by hand: base pay, part-months for joiners and leavers, absence and lateness deductions, overtime pay, the KPI bonus, commission, and the final take-home figure.</p>
+
+        <h4>What only a person can do</h4>
+        <ul>
+          <li><b>Approve things.</b> The system will never pay anything that is still sitting on "Pending".</li>
+          <li><b>Tell it about the real world</b> — public holidays, office closures, who left and when.</li>
+        </ul>
+
+        <h4>You are not the approver for everything</h4>
+        <p>Overtime, leave, KPI scores and delivery sign-off belong to <b>each person's manager</b>. You chase them; you do not decide for them. What is <b>yours</b>: bonuses, advances and penalties, whether a warning costs someone money, the calendar, the salary cards, and the run itself.</p>
+
+        <h4>If you get stuck</h4>
+        <p>Nothing you do before step 11 is permanent. Open <b>What the red messages mean</b> near the bottom of this page — every message the system can show you is listed there in plain English, with the fix and who does it.</p>
+      </div>
+    </details>
+
+    <p class="phase">Part 1 · Get everything in and approved <span>— the last few days of the month</span></p>
     <ul class="tasks">
 
       <li class="task" data-i="0">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-          <span class="txt"><span class="t">Everything's approved</span><span class="s">Managers approve OT, leaves &amp; KPIs — you check. You approve the adjustments.</span></span>
+          <span class="num">1</span>
+          <span class="txt">
+            <span class="own mgr">Managers decide · you chase</span>
+            <span class="t">Chase the managers for overtime, KPIs and leave</span>
+            <span class="s">Anything left on Pending is worth nothing on the payslip.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 1 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Overtime to approve</b> <span class="arrow">·</span> tab <b>Waiting for approval</b></p>
+          <p class="why">Overtime, KPI scores and leave are the <b>manager's</b> decision, not yours. You are here only to see what is outstanding and go and ask for it. If a manager never approves an overtime request, that person simply is not paid for those hours — nobody gets chased automatically.</p>
           <ol class="do">
-            <li>In the <span class="ui">Payroll</span> interface, open <span class="ui">Overtime to approve</span> and check nothing's left on <span class="f">Pending</span>. Leaves &amp; KPIs are the managers' to approve (in <span class="ui">My Team</span>) — just make sure they're done.</li>
-            <li><b>You</b> approve the <span class="ui">Bonuses, advances &amp; penalties</span> page: open each and set <span class="f">Approval Status</span> to <span class="set">Approved</span>.</li>
+            <li>Open <span class="ui">Overtime to approve</span>. The <span class="f">Waiting for approval</span> tab shows only what is still undecided, grouped by who submitted it.</li>
+            <li>An empty page means you are done here. Otherwise message each manager with the names in their group.</li>
+            <li>Now check the other two, which live in a different menu:
+              <ul>
+                <li><span class="ui">My Team</span> › <span class="ui">KPIs</span> — everyone who gets a KPI bonus needs their ratings filled in for this month.</li>
+                <li><span class="ui">My Team</span> › <span class="ui">Leaves</span> — nothing left on <span class="f">Pending</span>.</li>
+              </ul>
+            </li>
           </ol>
-          <div class="note stop"><b>Anything left Pending blocks that person's payslip.</b>Make sure leaves are approved <i>before</i> the attendance import — a day off that's still Pending gets charged as absent.</div>
-          <figure class="shot"><img src="Screenshots/ss01.png" alt="Pending approvals" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The approvals page in the interface, with anything still Pending showing.</span><span class="fn">screenshots/01-pending-approvals.png</span></div></figure>
+          <div class="note stop"><b>Get leave approved before you import attendance.</b>A day off still sitting on Pending is read as an unexplained absence, and that person loses a full day's pay for it.</div>
+          <div class="note warn"><b>No KPI ratings means a KPI bonus of zero.</b>It does not mean "average" and it does not mean "skip it" — the payslip will be held back saying the KPI scored zero. This is the most common hold-up in the whole run.</div>
+          <figure class="shot">
+            <img src="Screenshots/overtime-to-approve.jpg" alt="The Overtime to approve page showing nine overtime requests still marked Pending, grouped by the person who submitted them.">
+            <figcaption>Nine requests still on <b>Pending</b>. Each group heading is the person who submitted it — go to their manager.</figcaption>
+          </figure>
         </div></div></div>
       </li>
 
-      <li class="task danger" data-i="1">
+      <li class="task" data-i="1">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
-          <span class="txt"><span class="t">Set up this month's calendar</span><span class="s">Mark holidays, closures and any late-opening days.</span></span>
+          <span class="num">2</span>
+          <span class="txt">
+            <span class="own you">Yours to approve</span>
+            <span class="t">Approve the bonuses, advances and penalties</span>
+            <span class="s">Approve or reject every one. Never leave one Pending.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 2 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Bonuses, advances &amp; penalties</b> <span class="arrow">·</span> tab <b>Waiting for approval</b></p>
+          <p class="why">This is the one money page that is <b>yours</b>. Anything one-off — a bonus, a salary advance, paying somebody back for something they bought, a penalty — is recorded here. You do not have to work out whether it adds or subtracts: you choose the type, and the system knows.</p>
           <ol class="do">
-            <li>In the interface, open the <span class="ui">Working Days Calendar</span> and find the day by its <span class="f">Date</span>.</li>
-            <li><b>Holiday / office closed?</b> Untick <span class="f">Is Working Day</span> and fill <span class="f">Closure Reason</span>.</li>
-            <li><b>Opened late?</b> Put the minutes in <span class="f">Extra Grace Today (min)</span> — e.g. <span class="code">30</span>.</li>
-            <li><b>No lateness charged that day?</b> Untick <span class="f">Charge Lateness Today</span>.</li>
+            <li>Open the page and stay on <span class="f">Waiting for approval</span>. An empty list means nothing is outstanding.</li>
+            <li>Open each one, read the reason, and set <span class="f">Approval Status</span> to <span class="set">Approved</span> or <span class="set">Rejected</span>.</li>
+            <li>To add a new one, use <span class="ui">Add Adjustment</span> at the top right. Fill in the person, the month, the amount, and pick the type:
+              <ul>
+                <li><b>Adds to their pay:</b> Bonus · Reimbursement · Commission Override · Correction (Add)</li>
+                <li><b>Comes off their pay:</b> Advance · Loan Repayment · Penalty · Correction (Deduct)</li>
+              </ul>
+            </li>
+            <li>Always type the amount as a <b>positive number</b>. The type decides the direction — never use a minus sign.</li>
           </ol>
-          <div class="note warn"><b>This touches everyone at once.</b>An unmarked holiday charges the whole company as absent. Always leave a reason.</div>
-          <figure class="shot"><img src="Screenshots/ss02.png" alt="Working Days Calendar" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> One Working Days Calendar record.</span><span class="fn">screenshots/02-working-days-calendar.png</span></div></figure>
+          <div class="note stop"><b>One Pending adjustment holds back that person's whole payslip.</b>The system refuses to pay somebody while money that might be theirs is still undecided. If it is not happening, reject it — a rejected adjustment is simply ignored.</div>
+          <figure class="shot">
+            <img src="Screenshots/bonuses-adjustments.jpg" alt="The Bonuses, advances and penalties page with the Waiting for approval tab empty and an Add Adjustment button at the top right.">
+            <figcaption>This is what "nothing outstanding" looks like. <b>Add Adjustment</b>, top right, is how you add a new one.</figcaption>
+          </figure>
         </div></div></div>
       </li>
 
-      <li class="task danger" data-i="2">
+      <li class="task" data-i="2">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10"/><path d="M18 8l4 4-4 4M22 12H9"/></svg></span>
-          <span class="txt"><span class="t">Check every leaver's exit date</span><span class="s">Date first, then tick. Match it to their last punch.</span></span>
+          <span class="num">3</span>
+          <span class="txt">
+            <span class="own you">Yours to decide</span>
+            <span class="t">Decide which warnings cost money</span>
+            <span class="s">A warning only affects pay if you set it to Approved for Deduction.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 3 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Warnings to Approve</b></p>
+          <p class="why">Managers write warnings when something goes wrong — lateness, dress code, conduct. Most are a record only and cost nothing. <b>You</b> decide the small number that carry a pay deduction. Nothing is ever deducted unless you say so.</p>
           <ol class="do">
-            <li>In the interface, open the leaver's <span class="ui">Contract</span>. Fill <span class="f">Termination Date</span> = their true last working day, <b>then</b> tick <span class="f">Contract Terminated</span>.</li>
-            <li>Check the date against their <b>last fingerprint punch</b> before paying.</li>
+            <li>Open <span class="ui">Warnings to Approve</span>. An empty page means nothing needs a decision.</li>
+            <li>For each one, read the description and set <span class="f">Financial Status</span>:
+              <ul>
+                <li><span class="set">Not Financial</span> — a record only, no money. This is most warnings.</li>
+                <li><span class="set">Approved for Deduction</span> — this one costs money. Only this setting reaches the payslip.</li>
+                <li><span class="set">Waived</span> — you decided not to charge it.</li>
+              </ul>
+            </li>
+            <li>If it is chargeable, check <span class="f">Warning Action Taken</span> — that is what sets the size:
+              <ul>
+                <li><b>Full Day Salary Deduction</b> — one day's pay</li>
+                <li><b>1/2 Day Salary Deduction</b> — half a day's pay</li>
+                <li><b>Verbal Warning</b> — nothing</li>
+              </ul>
+            </li>
           </ol>
-          <div class="note stop"><b>Date FIRST, then the tick.</b>Tick with the date empty and the system stamps <b>today</b> — closing their pay on the wrong day.</div>
+          <div class="note warn"><b>Decide before you build the payslips, not after.</b>Once a warning has been attached to a payslip, changing it to Waived does not remove the deduction by itself. If you change your mind later, re-tick <b>Generate Payslips Now</b> so the payslip is rebuilt from scratch.</div>
+          <figure class="shot">
+            <img src="Screenshots/warnings-to-approve.jpg" alt="The Warnings to Approve page with no records waiting for a decision.">
+            <figcaption>Nothing waiting — move on. When something appears here, it needs a decision from you.</figcaption>
+          </figure>
         </div></div></div>
       </li>
 
-      <li class="task danger" data-i="3">
+      <li class="task" data-i="3">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 6.5L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-5.5A2 2 0 0 0 16.8 5H7.2a2 2 0 0 0-1.7 1.5z"/></svg></span>
-          <span class="txt"><span class="t">Import the attendance</span><span class="s">Open TRR Attendance and click Update attendance.</span></span>
+          <span class="num">4</span>
+          <span class="txt">
+            <span class="own you">Yours to set</span>
+            <span class="t">Mark the holidays and closures on the calendar</span>
+            <span class="s">This affects every employee at once — take your time.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 4 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Working Days Calendar</b></p>
+          <p class="why">The system has no idea which days were public holidays or when the office was shut. It treats every day as a normal working day unless you tell it otherwise — and if you don't, it charges the entire company as absent for a day nobody was meant to be in.</p>
           <ol class="do">
-            <li>Open the <span class="ui">TRR Attendance</span> page.</li>
-            <li>Click <span class="set">Update attendance</span> — it reads the machine and saves straight to Airtable. Running it again is safe.</li>
+            <li>Open <span class="ui">Working Days Calendar</span> and scroll to your month. There is one row per day.</li>
+            <li><b>Public holiday, weekend or office closed?</b> Untick <span class="f">Is Working Day</span> and write why in <span class="f">Closure Reason</span> — for example <span class="code">Revolution Day (public holiday)</span>.</li>
+            <li><b>Office opened late?</b> Leave it as a working day and put the extra minutes everyone is forgiven into <span class="f">Extra Grace Today (min)</span> — for example <span class="code">30</span>.</li>
+            <li><b>Fingerprint machine broken, or a day you don't want lateness charged?</b> Untick <span class="f">Charge Lateness Today</span>. People still count as present; they just cannot be charged for arriving late.</li>
           </ol>
-          <div class="note stop"><b>The one hard deadline.</b>If attendance isn't imported, everyone is paid in full with no absences taken off.</div>
-          <figure class="shot"><img src="Screenshots/ss04.png" alt="TRR Attendance page" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The TRR Attendance page with the <b>Update attendance</b> button.</span><span class="fn">Screenshots/ss04.png</span></div></figure>
+          <div class="note tip"><b>The normal arrival rules, for reference.</b>The office starts at <b>10:00</b>. Up to <b>11 minutes</b> late is free. More than 11 minutes costs a quarter of a day. More than 31 minutes costs half a day. Any extra grace you set for a day is added on before any of that applies.</div>
+          <figure class="shot">
+            <img src="Screenshots/working-days-calendar.jpg" alt="The Working Days Calendar for July 2026, one row per day, showing weekends, a public holiday, days the fingerprint device was out of service, and a day with 30 minutes extra grace.">
+            <figcaption>A real month. Note the mix: weekends, <b>Revolution Day (public holiday)</b>, days the fingerprint device was out of service, and one day given <b>30</b> minutes extra grace because the office opened late.</figcaption>
+          </figure>
+        </div></div></div>
+      </li>
+
+      <li class="task" data-i="4">
+        <button class="row" aria-expanded="false">
+          <span class="num">5</span>
+          <span class="txt">
+            <span class="own you">Yours to check</span>
+            <span class="t">Check the salary cards, and close off anyone who left</span>
+            <span class="s">No salary card means no payslip — and nothing warns you.</span>
+          </span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 5 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Salary cards</b> <span class="arrow">·</span> tab <b>Active</b></p>
+          <p class="why">A <b>salary card</b> is the record that says what somebody is paid. Everyone who gets paid needs one. It is normally created for you when their contract is added — but if it is missing, that person quietly gets no payslip at all, and you would not notice unless you looked.</p>
+          <ol class="do">
+            <li>Open <span class="ui">Salary cards</span> on the <span class="f">Active</span> tab and compare the list against everyone who worked this month.</li>
+            <li>For anyone new, check <span class="f">Base Salary</span> is right and <span class="f">Effective From</span> is their real start date.</li>
+            <li>Look at the <b>Sum</b> under the Base Salary column. If it has jumped since last month for a reason you don't recognise, find out why before going on.</li>
+            <li><b>For anyone who left:</b> open their <span class="ui">Contract</span>, fill in <span class="f">Termination Date</span> with their true last working day <b>first</b>, and only <b>then</b> tick <span class="f">Contract Terminated</span>.</li>
+          </ol>
+          <div class="note stop"><b>Date first, then the tick. Never the other way round.</b>If you tick <b>Contract Terminated</b> while the date is still empty, the system stamps <b>today</b> as their leaving date and closes their pay on the wrong day.</div>
+          <div class="note tip"><b>Somebody who should not be paid at all?</b>Unpaid interns and anyone off the payroll should have <b>Payroll Exclude</b> ticked on their employee record. They are then skipped completely and never show up as a problem.</div>
+          <figure class="shot">
+            <img src="Screenshots/salary-cards.jpg" alt="The Salary cards page on the Active tab listing 36 cards with card ID, employee, status, effective dates and base salary, with a sum at the bottom.">
+            <figcaption>36 active cards. The <b>Sum</b> at the bottom right is your quickest sanity check on the month's total wage bill.</figcaption>
+          </figure>
+        </div></div></div>
+      </li>
+
+      <li class="task" data-i="5">
+        <button class="row" aria-expanded="false">
+          <span class="num">6</span>
+          <span class="txt">
+            <span class="own you">Yours to run</span>
+            <span class="t">Import the attendance, then look at what came in</span>
+            <span class="s">Importing is one click. Checking it actually arrived is the bit people skip.</span>
+          </span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 6 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>TRR Attendance</b> page (not Airtable) <span class="arrow">→ then →</span> <b>Payroll</b> <span class="arrow">›</span> <b>Attendance Monthly</b></p>
+          <p class="why">Everyone's fingerprint punches sit in the machine until you pull them across. Until you do, the system has no idea who was absent or late — and will happily pay everybody in full.</p>
+          <ol class="do">
+            <li>Open the <span class="ui">TRR Attendance</span> page and click <span class="set">Update attendance</span>. It reads the machine and saves everything into Airtable. Running it more than once is completely safe.</li>
+            <li>Go back to Airtable and open <span class="ui">Attendance Monthly</span>. This is one row per person for the month — days present, absent, late, and total deduction days.</li>
+            <li>Read down it and ask two questions:
+              <ul>
+                <li><b>Is everybody here?</b> Somebody missing entirely usually means their fingerprint ID is not linked to their employee record.</li>
+                <li><b>Does anything look impossible?</b> Someone showing 0 or 4 days present who you know was in all month means their punches did not come through.</li>
+              </ul>
+            </li>
+            <li>To dig into one person's individual days, open <span class="ui">Attendance Daily</span> and group by employee. You get every date, the first punch in, the last punch out, and how many minutes late they were.</li>
+          </ol>
+          <div class="note stop"><b>This is the one deadline you cannot miss.</b>If attendance is not imported, nobody is charged for a single absence or late arrival. The payslips will look completely normal and be wrong.</div>
+          <div class="note warn"><b>Do this after leave is approved, not before.</b>Approved leave cancels the absence out. An approved day off costs nothing; the very same day left on Pending costs a full day's pay.</div>
+          <figure class="shot">
+            <img src="Screenshots/attendance-importer.png" alt="The TRR Attendance page with a large Update attendance button that reads the machine and saves the latest attendance to Airtable.">
+            <figcaption>Step one: the <b>Update attendance</b> button on the TRR Attendance page.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="Screenshots/attendance-monthly.jpg" alt="The Attendance Monthly page for August 2026 with one row per employee showing days present, absent days, late days and total deduction days.">
+            <figcaption>Step two: one row per person. <b>Ibrahim</b> shows only 4 days present — exactly the kind of row worth a second look.</figcaption>
+          </figure>
+          <figure class="shot">
+            <img src="Screenshots/attendance-daily.jpg" alt="The Attendance Daily page grouped by month and employee, showing each date with first in, last out, extra grace, late minutes and lateness deduction days.">
+            <figcaption>And when you need the detail: every day for one person, with the exact minutes late and what it cost.</figcaption>
+          </figure>
         </div></div></div>
       </li>
 
     </ul>
 
-    <p class="phase">Generate the payslips · when the check says ready</p>
+    <p class="phase">Part 2 · Build the payslips and clean them up <span>— nothing here is sent to anyone</span></p>
     <ul class="tasks">
 
-      <li class="task danger" data-i="5">
+      <li class="task" data-i="6">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
-          <span class="txt"><span class="t">Tick the box to generate</span><span class="s">Read the green/red check first, then tick Generate Payslips Now.</span></span>
+          <span class="num">7</span>
+          <span class="txt">
+            <span class="own you">Yours to run</span>
+            <span class="t">Check the month says "ready", then tick the box</span>
+            <span class="s">Payslips are not automatic. You tick a box to build them.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 7 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Run Payslips</b></p>
+          <p class="why">This page has one row per month. Before you build anything it tells you, in plain English, whether the information is complete — so you are never guessing whether it is safe to go.</p>
           <ol class="do">
-            <li>In the <span class="ui">Payroll</span> interface, open the <span class="ui">Run Payslips</span> page and find this month.</li>
-            <li>Read <span class="f">Payslip Readiness</span>. <b>🟢 "Inputs ready"</b> — go on. <b>🔴 "Not ready"</b> — it lists what's missing (overtime pending, KPIs not generated…); fix those first, and it turns green on its own.</li>
-            <li>When green, tick <span class="f">Generate Payslips Now</span>. The payslips build, then the box <b>unticks itself</b> — that means it finished.</li>
+            <li>Open <span class="ui">Run Payslips</span> and find your month's row.</li>
+            <li>Read <span class="f">Payslip Readiness</span>:
+              <ul>
+                <li><b>✅ "Inputs ready — tick Generate Payslips Now"</b> — go ahead.</li>
+                <li><b>⚠ "Not ready"</b> — it lists exactly what is missing, such as <i>9 overtime pending approval</i> or <i>KPIs not generated yet</i>. Go and fix those; this turns green by itself. There is no refresh button to press.</li>
+              </ul>
+            </li>
+            <li>Once it is green, tick <span class="f">Generate Payslips Now</span>.</li>
+            <li>Wait about a minute. <b>The tick disappears on its own</b> — that is how you know it has finished.</li>
           </ol>
-          <div class="note tip"><b>Safe to re-tick.</b>Running it again never duplicates and never touches an already-approved payslip. Tick again any time you've changed something.</div>
-          <figure class="shot"><img src="Screenshots/ss05.png" alt="Run Payslips page" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The <b>Run Payslips</b> page: the readiness message and the <b>Generate Payslips Now</b> checkbox.</span><span class="fn">Screenshots/ss05.png</span></div></figure>
-        </div></div></div>
-      </li>
-
-      <li class="task danger" data-i="6">
-        <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg></span>
-          <span class="txt"><span class="t">Read the card check &amp; everyone has a payslip</span><span class="s">After it runs, the month tells you who to fix.</span></span>
-        </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
-        <div class="how"><div class="how-in"><div class="how-pad">
-          <ol class="do">
-            <li>On the same <span class="ui">Run Payslips</span> page, read <span class="f">Card Check Result</span>. <b>✅ "All clean"</b> — nothing to do. <b>⚠ names listed</b> — each says the problem (no salary card, or attendance not imported).</li>
-            <li>For anyone named <b>"no salary card"</b>: open the <span class="ui">Salary cards</span> page. Either they're a real paid person who needs a card (usually add their contract and the card appears), or they don't get paid here — tick <span class="f">Payroll Exclude</span> on their employee record.</li>
-            <li>Fix the named people, then <b>tick Generate Payslips Now again</b> and re-read — it should go ✅.</li>
-            <li>Finally, open the <span class="ui">Payslips</span> page and check everyone expected has one.</li>
-          </ol>
-          <div class="note stop"><b>The card check catches silent overpay.</b>"Attendance not imported" or "no salary card" means someone would be paid wrong. Clear the list before approving.</div>
-          <figure class="shot"><img src="Screenshots/ss06.png" alt="Card Check Result" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The <b>Card Check Result</b> field showing an example ✅ clean and a ⚠ with names.</span><span class="fn">Screenshots/ss06.png</span></div></figure>
+          <div class="note tip"><b>You can do this as many times as you like.</b>Re-ticking never creates duplicates and never touches a payslip you have already approved. Any time you fix something, tick it again and the payslips are rebuilt with the new information.</div>
+          <figure class="shot">
+            <img src="Screenshots/run-payslips.jpg" alt="The Run Payslips page listing months, each with a Payslip Readiness message, a Generate Payslips Now checkbox and a Card Check Result column.">
+            <figcaption><b>Aug26</b> is not ready — 9 overtime still pending. <b>Jul26</b> is green and ready to tick. The two right-hand columns are steps 7 and 8.</figcaption>
+          </figure>
         </div></div></div>
       </li>
 
       <li class="task" data-i="7">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4M12 16h.01"/></svg></span>
-          <span class="txt"><span class="t">Clear every blocker</span><span class="s">Set them to Under Review first, then fix any blocker.</span></span>
+          <span class="num">8</span>
+          <span class="txt">
+            <span class="own you">Yours to check</span>
+            <span class="t">Read the card check and fix whoever it names</span>
+            <span class="s">This catches the two problems that would silently pay someone wrong.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 8 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Run Payslips</b> <span class="arrow">·</span> column <b>Card Check Result</b></p>
+          <p class="why">Some problems can only be spotted <i>after</i> the payslips are built. Rather than hiding them in a technical log, the system writes them into this column by name, in plain English. Read it every single time.</p>
           <ol class="do">
-            <li>In the interface, set each payslip's <span class="f">Payslip Status</span> to <span class="set">Under Review</span>. A payslip only shows its blockers <b>after</b> it's Under Review — a problem one turns <span class="f">Blocked</span>.</li>
-            <li>On a <span class="f">Blocked</span> one, read the <span class="f">Blockers</span> — the message says what's wrong.</li>
-            <li>Fix the <b>cause</b> (approve the bonus, add a missing date…). It clears itself — no button.</li>
+            <li>Stay on the same row and read <span class="f">Card Check Result</span>.</li>
+            <li><b>✅ "All clean"</b> — nothing to do, go to step 9.</li>
+            <li><b>⚠ "N to fix before approving"</b> — it names each person and the problem:
+              <ul>
+                <li><b>"no salary card"</b> — they worked this month but have nothing saying what they are paid, so they got no payslip at all. Go back to step 5 and give them a card, or tick <span class="f">Payroll Exclude</span> if they should not be paid.</li>
+                <li><b>"attendance ON but no days imported"</b> — their fingerprint recorded nothing whatsoever. As it stands they will be paid in full with no absences taken off. Either re-import, or confirm they genuinely were not in.</li>
+              </ul>
+            </li>
+            <li>Fix everyone named, then <b>tick <span class="f">Generate Payslips Now</span> again</b> and re-read this column. Keep going until it says ✅.</li>
           </ol>
-          <div class="note tip"><b>A block is protection, not a fault.</b>It refuses to pay a wrong number that would look right.</div>
-          <figure class="shot"><img src="Screenshots/ss08.png" alt="Blockers column" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> A payslip in the interface showing a real blocker message.</span><span class="fn">screenshots/08-blockers-column.png</span></div></figure>
+          <div class="note stop"><b>Never skip a name because the payslip "looks fine".</b>Both of these problems produce a payslip that looks completely normal and pays the wrong amount. That is exactly why this check exists.</div>
         </div></div></div>
       </li>
 
       <li class="task" data-i="8">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span>
-          <span class="txt"><span class="t">Totals look right</span><span class="s">Give the Net Pay a quick look.</span></span>
+          <span class="num">9</span>
+          <span class="txt">
+            <span class="own you">Yours to clear</span>
+            <span class="t">Empty the "Needs fixing" list</span>
+            <span class="s">Each one tells you what is wrong. Fix the cause and it clears itself.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 9 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Payslips</b> <span class="arrow">·</span> tab <b>Needs fixing</b></p>
+          <p class="why">The <span class="f">Payslips</span> page sorts everything into tabs so you always know what is left: <b>Needs fixing</b>, <b>Ready to approve</b>, <b>Approved</b>, <b>Paid</b>. Your job in this step is simply to empty the first tab.</p>
           <ol class="do">
-            <li>On the <span class="ui">Payslips</span> page, look down the <span class="f">Net Pay</span> column and make sure the numbers look right.</li>
-            <li>Anything that looks off — open that payslip and check it before approving.</li>
+            <li>Open <span class="ui">Payslips</span> and stay on <span class="f">Needs fixing</span>.</li>
+            <li>Read the <span class="f">Checklist</span> column. It is written in plain English and says exactly what is wrong with that person's payslip.</li>
+            <li>Go and fix the <b>cause</b> — approve the bonus, get the KPI scored, import the attendance. You never edit the payslip itself.</li>
+            <li>The payslip moves itself over to <span class="f">Ready to approve</span> once the problem is gone. <b>There is no button to press.</b></li>
+            <li>Don't recognise a message? Open <b>What the red messages mean</b> further down this page — every one is listed with the fix.</li>
+          </ol>
+          <div class="note tip"><b>A payslip being held back is the system protecting you.</b>It is refusing to pay a number it cannot stand behind. Each of these would otherwise have been a wrong payment that looked completely normal.</div>
+          <figure class="shot">
+            <img src="Screenshots/payslips-needs-fixing.jpg" alt="The Payslips page on the Needs fixing tab, showing eleven draft payslips with a Checklist column explaining what is wrong with each one.">
+            <figcaption>Eleven to clear. Nine say <b>KPI scored zero</b> — managers have not put their ratings in yet. Two say <b>No attendance imported</b>. Both are fixed away from this page.</figcaption>
+          </figure>
+        </div></div></div>
+      </li>
+
+      <li class="task" data-i="9">
+        <button class="row" aria-expanded="false">
+          <span class="num">10</span>
+          <span class="txt">
+            <span class="own you">Yours to check</span>
+            <span class="t">Sense-check the numbers before you commit</span>
+            <span class="s">Your last chance to catch something the system cannot know is wrong.</span>
+          </span>
+        </button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 10 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Payslips</b> <span class="arrow">·</span> tab <b>Ready to approve</b></p>
+          <p class="why">Everything here has passed every automatic check. But the system cannot know that a bonus was meant to be 5,000 and not 50,000. Two minutes reading down the column is the cheapest check you will ever do.</p>
+          <ol class="do">
+            <li>Switch to the <span class="f">Ready to approve</span> tab and read down <span class="f">Net Pay</span>.</li>
+            <li>Compare against last month. Anything noticeably higher or lower, open it and look at the breakdown.</li>
+            <li>Perfectly normal reasons for a big difference:
+              <ul>
+                <li>They joined or left part-way through the month, so their pay is scaled to the days they worked.</li>
+                <li>A lot of absence or lateness.</li>
+                <li>A one-off bonus, or an advance being repaid.</li>
+                <li>Commission, which changes every month.</li>
+              </ul>
+            </li>
+            <li>Also confirm the <b>number of payslips</b> matches the number of people you expect to pay.</li>
           </ol>
         </div></div></div>
       </li>
 
     </ul>
 
-    <div class="pnr"><span class="ln"></span><span class="lab">Point of no return</span><span class="ln"></span></div>
+    <div class="pnr"><span class="ln"></span><span class="lab">From here on you cannot undo it</span><span class="ln"></span></div>
 
-    <p class="phase">Approve &amp; pay · one-way</p>
+    <p class="phase">Part 3 · Approve and pay <span>— one way only</span></p>
     <ul class="tasks">
 
-      <li class="task danger" data-i="9">
+      <li class="task" data-i="10">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <span class="txt"><span class="t">Approve — the figures freeze</span><span class="s">Approve the clean ones. Numbers lock.</span></span>
+          <span class="num">11</span>
+          <span class="txt">
+            <span class="own you">Yours to approve</span>
+            <span class="t">Approve — the numbers freeze for good</span>
+            <span class="s">Still nothing sent to anybody. But the figures stop moving.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 11 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Payslips</b> <span class="arrow">·</span> field <b>Payslip Status</b></p>
+          <p class="why">Approving takes a permanent copy of every figure. From that moment the payslip is a record of what was paid rather than a live calculation — so if somebody later changes a KPI score, a salary or an overtime request, an already-approved payslip cannot move.</p>
           <ol class="do">
-            <li>On the <span class="ui">Payslips</span> page, set each clean payslip (not <span class="f">Blocked</span>) to <span class="set">Approved</span>.</li>
-            <li>Anything still wrong snaps back to <span class="f">Blocked</span> — your safety net.</li>
-            <li><span class="set">Approved</span> takes a snapshot and freezes it. Nothing is sent yet.</li>
+            <li>On the <span class="f">Ready to approve</span> tab, set each payslip's <span class="f">Payslip Status</span> to <span class="set">Approved</span>.</li>
+            <li>If something is still wrong it will refuse and drop back to <span class="f">Blocked</span>. That is the safety net doing its job — go and read its <span class="f">Checklist</span>.</li>
+            <li>Approved payslips move to the <span class="f">Approved</span> tab. <b>Nothing has been sent to anybody yet.</b></li>
           </ol>
-          <div class="note warn"><b>Check before you approve.</b>Once locked, a fix means a correction next month, not an edit.</div>
-          <figure class="shot"><img src="Screenshots/ss10.png" alt="Status flow" hidden onload="this.hidden=false;this.nextElementSibling.hidden=true"><div class="ph"><span class="cam">▦</span><span class="lab"><b>Screenshot slot.</b> The Payslip Status dropdown in the interface: Draft → Under Review → Approved → Paid.</span><span class="fn">screenshots/10-status-flow.png</span></div></figure>
+          <div class="note warn"><b>Check before you approve, not after.</b>Once a payslip is approved the figures are locked. Correcting a mistake means adding an adjustment to <b>next</b> month, not editing this one.</div>
+          <div class="note tip"><b>The statuses, in order.</b><b>Draft</b> — just built · <b>Blocked</b> — something is wrong · <b>Under Review</b> — you are checking it · <b>Approved</b> — figures frozen · <b>Paid</b> — money sent and employee emailed · <b>Void</b> — cancelled and replaced by another payslip.</div>
         </div></div></div>
       </li>
 
-      <li class="task danger" data-i="10">
+      <li class="task" data-i="11">
         <button class="row" aria-expanded="false">
-          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg></span>
-          <span class="txt"><span class="t">Mark Paid — the employee is emailed</span><span class="s">Only after the money's out. This sends the email.</span></span>
+          <span class="num">12</span>
+          <span class="txt">
+            <span class="own you">Yours to send</span>
+            <span class="t">Mark Paid — this is what emails everyone</span>
+            <span class="s">Only after the money has actually left the bank.</span>
+          </span>
         </button>
-        <button class="mark" aria-pressed="false" aria-label="Mark done"><span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
+        <button class="mark" aria-pressed="false" aria-label="Mark step 12 done"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span></button>
         <div class="how"><div class="how-in"><div class="how-pad">
+          <p class="where"><b>Payroll</b> <span class="arrow">›</span> <b>Payslips</b> <span class="arrow">·</span> tab <b>Approved</b></p>
+          <p class="why">This is the only step in the whole process that an employee ever sees. Marking a payslip Paid emails that person their full breakdown — so the order matters: transfer first, mark Paid second.</p>
           <ol class="do">
-            <li>After you've <b>actually transferred</b> the salaries, set the payslip's <span class="f">Payslip Status</span> to <span class="set">Paid</span> in the interface.</li>
-            <li>That emails each person their full breakdown.</li>
+            <li><b>Transfer the salaries.</b> Do this first.</li>
+            <li>Once the money is genuinely out, set <span class="f">Payslip Status</span> to <span class="set">Paid</span>.</li>
+            <li>Fill in <span class="f">Payment Reference</span> so there is a record of how it was paid.</li>
+            <li>Each person is emailed their breakdown automatically. Nobody can be emailed twice.</li>
           </ol>
-          <div class="note stop"><b>First live month only.</b>Turn the payslip-email automation <b>on</b> right before this — it's kept off until now so nobody's emailed by accident. After the first month it stays on.</div>
+          <div class="note stop"><b>Never mark Paid before the transfer.</b>The email tells somebody they have been paid. If the transfer then fails or changes, they have already been told the wrong thing.</div>
+          <div class="note warn"><b>Running this for the very first time?</b>Check with Mahmoud that the payslip email is switched on before you mark anything Paid — it is deliberately kept off until the first real run so nobody is emailed by accident during testing.</div>
         </div></div></div>
       </li>
 
     </ul>
+
+    <details class="ref" id="decoder">
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        What the red messages mean
+        <span class="cnt">12 messages</span>
+        <span class="caret"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </summary>
+      <div class="ref-in">
+        <p class="why">Every message the <span class="f">Checklist</span> column can show you, what it actually means, and who fixes it. Type a word from the message to find it.</p>
+        <input class="search" id="bksearch" type="search" placeholder="Type a word from the message — try KPI, or attendance" autocomplete="off" aria-label="Search the messages">
+        <div id="bklist">
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>No attendance imported — nobody has checked whether this person was absent or late.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">Their fingerprint recorded <b>nothing at all</b> this month, but they are set up to have absences deducted. Left alone, they get paid in full as though they had perfect attendance.</p>
+            <ol class="fix"><li>Re-run <b>Update attendance</b> on the TRR Attendance page (step 6).</li><li>Still nothing? Their fingerprint ID is probably not linked to their employee record — check with Mahmoud.</li><li>If they genuinely were not in at all — long leave, for example — record that properly rather than leaving it blank.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>KPI scored zero — check the employee's Position and Department match a branch of the Overall % formula.</summary><div class="bk-in">
+            <span class="tagline mgr">A manager fixes this</span>
+            <p class="means">There is a KPI record for this person but it scores <b>0%</b>, so their KPI bonus is nothing. Almost always this means <b>their manager has not filled in the ratings yet</b>.</p>
+            <ol class="fix"><li>Go to <b>My Team › KPIs</b>, find them, and check the rating boxes are actually filled in.</li><li>Empty? Chase their manager. This is the most common hold-up in the whole run.</li><li>Filled in and it still says zero? Their <b>Position</b> or <b>Department</b> doesn't match any scoring group — that one needs Mahmoud.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>No KPI record for this period.</summary><div class="bk-in">
+            <span class="tagline mgr">A manager fixes this</span>
+            <p class="means">This person is due a KPI bonus but no KPI record was ever created for them this month, so there is nothing for anyone to score.</p>
+            <ol class="fix"><li>KPI records are created automatically on the 1st of each month. Somebody who joined after that may not have one.</li><li>Check <b>My Team › KPIs</b> for the month.</li><li>If it really is missing, ask Mahmoud to create it — then get the manager to score it.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>KPI percent out of range.</summary><div class="bk-in">
+            <span class="tagline help">Ask Mahmoud</span>
+            <p class="means">The KPI score came out as something impossible — below 0% or above 100%. Something is wrong behind the ratings.</p>
+            <ol class="fix"><li>Open the KPI record and check no rating has been entered oddly.</li><li>This is rare, and usually a setup problem rather than anything you can fix from the payroll pages.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Unapproved adjustments exist.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">This person has a bonus, advance or penalty still sitting on <b>Pending</b>. The system will not pay them while money that might be theirs is undecided.</p>
+            <ol class="fix"><li>Open <b>Bonuses, advances &amp; penalties</b> and find their record on <b>Waiting for approval</b>.</li><li>Set <b>Approval Status</b> to <b>Approved</b> or <b>Rejected</b>. Either one clears the hold — rejected ones are ignored completely.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>No or multiple salary cards.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">Either this person has no record saying what they are paid, or they somehow have two covering the same dates.</p>
+            <ol class="fix"><li>Open <b>Salary cards</b> and search for them.</li><li><b>None?</b> Their contract probably was not added — adding it usually creates the card automatically.</li><li><b>Two?</b> The old one should have been closed when the new one started. Ask Mahmoud rather than deleting anything.</li><li>If they should not be paid at all, tick <b>Payroll Exclude</b> on their employee record.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Attendance does not reconcile.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">The days don't add up — the number of days counted doesn't equal present plus absent plus on leave. Something in the import is incomplete.</p>
+            <ol class="fix"><li>Run <b>Update attendance</b> again. This often just fixes itself.</li><li>Open <b>Attendance Daily</b>, filter to that person, and look for days with no status at all.</li><li>Check the <b>Working Days Calendar</b> covers every day of the month.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Attendance has days where the arrival time is unknown.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">On some days there is a punch but no readable arrival time, so the system cannot tell whether they were late — and it will not guess.</p>
+            <ol class="fix"><li>Open <b>Attendance Daily</b> and filter to that person.</li><li>Find the days with an empty <b>First In</b> and check what actually happened.</li><li>If the machine was broken that day, mark it on the <b>Working Days Calendar</b> by unticking <b>Charge Lateness Today</b>.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Commission lines still pending audit.</summary><div class="bk-in">
+            <span class="tagline mgr">A manager fixes this</span>
+            <p class="means">This person has commission waiting on a manager's sign-off. Until it is approved it is worth zero.</p>
+            <ol class="fix"><li>Commission comes from delivery submissions and client payments, both signed off by a manager.</li><li>Chase whoever audits deliveries for that team.</li><li>If the commission is not owed, it needs to be rejected rather than left pending.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Negative net pay.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">What is being taken off comes to <b>more than they earned</b>. Usually a salary advance being repaid all in one go, or a penalty that is too large.</p>
+            <ol class="fix"><li>Open the payslip and look at what is being deducted.</li><li>Most often the answer is to split a repayment across two or three months instead of one.</li><li>Change the adjustment in <b>Bonuses, advances &amp; penalties</b>, then re-tick <b>Generate Payslips Now</b>.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Payroll settings not written.</summary><div class="bk-in">
+            <span class="tagline you">You fix this</span>
+            <p class="means">The payslip was built without the standard rules attached — the working-days divisor, the hours per day and the overtime rate are missing.</p>
+            <ol class="fix"><li>Re-tick <b>Generate Payslips Now</b> on the <b>Run Payslips</b> page. This nearly always clears it.</li><li>If it comes back, ask Mahmoud — it means the settings record itself has been switched off.</li></ol>
+          </div></details>
+
+          <details class="bk"><summary><span class="q">&rsaquo;</span>Period dates invalid.</summary><div class="bk-in">
+            <span class="tagline help">Ask Mahmoud</span>
+            <p class="means">The dates this payslip covers don't make sense — for example it ends before it starts, or it runs longer than the month.</p>
+            <ol class="fix"><li>Usually caused by a wrong date on a salary card or a contract.</li><li>Check that person's <b>Effective From</b> and <b>Effective Until</b> on <b>Salary cards</b>.</li><li>If those look right, this one needs Mahmoud.</li></ol>
+          </div></details>
+
+        </div>
+        <p class="nohit" id="bknohit" hidden>Nothing matches that. Try a single word, like <b>KPI</b>, <b>salary</b> or <b>attendance</b>.</p>
+      </div>
+    </details>
+
+    <details class="ref">
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg>
+        Who approves what
+        <span class="caret"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </summary>
+      <div class="ref-in">
+        <p class="why">If you remember one thing: <b>you do not approve people's work — their manager does.</b> You approve money, and you own the run itself.</p>
+        <div class="tbl-scroll">
+          <table>
+            <thead><tr><th>What</th><th>Who decides</th><th>Where</th></tr></thead>
+            <tbody>
+              <tr><td><b>Overtime</b></td><td>The person's manager</td><td>My Team › Overtime</td></tr>
+              <tr><td><b>Leave</b></td><td>The person's manager</td><td>My Team › Leaves</td></tr>
+              <tr><td><b>KPI ratings</b></td><td>The person's manager</td><td>My Team › KPIs</td></tr>
+              <tr><td><b>Delivery sign-off</b> (this feeds commission)</td><td>The auditing manager</td><td>Delivery submissions</td></tr>
+              <tr><td><b>Raising a warning</b></td><td>The person's manager</td><td>My Team › Employee Warning</td></tr>
+              <tr><td><b>Whether a warning costs money</b></td><td><b>You</b></td><td>Payroll › Warnings to Approve</td></tr>
+              <tr><td><b>Bonuses, advances, penalties</b></td><td><b>You</b></td><td>Payroll › Bonuses, advances &amp; penalties</td></tr>
+              <tr><td><b>Holidays and closures</b></td><td><b>You</b></td><td>Payroll › Working Days Calendar</td></tr>
+              <tr><td><b>Salary cards and leavers</b></td><td><b>You</b></td><td>Payroll › Salary cards</td></tr>
+              <tr><td><b>Building, approving and paying</b></td><td><b>You</b></td><td>Payroll › Run Payslips, Payslips</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </details>
+
+    <details class="ref">
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Words you'll see, in plain English
+        <span class="caret"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </summary>
+      <div class="ref-in">
+
+        <details class="gl"><summary>Payslip<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>One person's pay for one month. If somebody's salary changed part-way through the month you may see <b>two</b> payslips for them, one for each part. That is correct — it is not a duplicate.</p></details>
+
+        <details class="gl"><summary>Salary card<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>The record that says what somebody is paid — base salary, KPI bonus amount, commission rates, and whether absences are deducted. Everyone who is paid needs one. When someone gets a raise a <b>new</b> card is created and the old one closed, which is why you will see cards marked <b>Superseded</b>.</p></details>
+
+        <details class="gl"><summary>Prorated<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Scaled to the days actually worked. Somebody starting on the 13th of a 31-day month is paid 19 days out of 31, not the full amount. You will see this on every joiner and leaver, and it is usually why their pay looks unexpectedly low.</p></details>
+
+        <details class="gl"><summary>Deduction day<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>How absence and lateness are counted — in days rather than money. A full unexplained absence is <b>1</b>. Arriving more than 31 minutes late is <b>0.5</b>. More than 11 minutes is <b>0.25</b>. The system turns those into money using one day's pay.</p></details>
+
+        <details class="gl"><summary>Adjustment<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Any one-off amount added to or taken off somebody's pay this month — a bonus, an advance, a reimbursement, a penalty. Always entered as a positive number; the <b>type</b> decides whether it adds or subtracts.</p></details>
+
+        <details class="gl"><summary>KPI pot<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>The most somebody can earn in performance bonus in a month. They receive the share of it their manager's rating gives them — score 80%, get 80% of the pot. No rating means no bonus at all.</p></details>
+
+        <details class="gl"><summary>Blocked, and the Checklist column<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>The system refusing to pay a figure it cannot stand behind. The <b>Checklist</b> column says why in plain English. Fix the cause and it clears on its own — there is nothing to press and nothing to override.</p></details>
+
+        <details class="gl"><summary>Approved, locked, snapshot<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Three words for the same idea. When you approve a payslip the system takes a permanent copy of every figure, so a later change to a salary or a KPI score can never move a payslip that has already been paid.</p></details>
+
+        <details class="gl"><summary>Void<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>A payslip that was cancelled and replaced, usually because a salary card was corrected after it was built. You can ignore them — they exist so there is a trail.</p></details>
+
+      </div>
+    </details>
+
+    <details class="ref">
+      <summary>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        "Something looks wrong" — quick answers
+        <span class="caret"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+      </summary>
+      <div class="ref-in">
+
+        <details class="gl"><summary>Somebody has no payslip at all<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Almost always a missing <b>salary card</b>. Check <b>Card Check Result</b> on the Run Payslips page — it names them. Also check <b>Payroll Exclude</b> has not been ticked on their employee record by mistake.</p></details>
+
+        <details class="gl"><summary>I ticked Generate Payslips Now and nothing happened<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Give it a minute and refresh the page. When it has finished, <b>the tick disappears by itself</b>. If it is still ticked after a few minutes, untick it, wait, and tick it again.</p></details>
+
+        <details class="gl"><summary>Someone's pay is much lower than usual<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Work down this list: did they join or leave part-way through the month? Is there a lot of absence in <b>Attendance Monthly</b>? Is an advance being repaid? Was their leave left on Pending and charged as absence? That last one is the one worth checking first.</p></details>
+
+        <details class="gl"><summary>I approved a payslip and it was wrong<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>You cannot edit it — that is deliberate. Fix it by adding an <b>adjustment</b> to next month: <b>Correction (Add)</b> if you underpaid, <b>Correction (Deduct)</b> if you overpaid. Tell the person either way.</p></details>
+
+        <details class="gl"><summary>A manager isn't approving anything<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>You cannot approve it for them, and you should not try. Escalate instead — an unapproved overtime request means their team member does not get paid for hours they actually worked.</p></details>
+
+        <details class="gl"><summary>The month says "KPIs not generated yet"<span class="caret"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span></summary>
+          <p>Perfectly normal for a month that has not ended yet — KPI records are created on the 1st, for the month just finished. If it says this for a month that <i>has</i> ended, ask Mahmoud.</p></details>
+
+      </div>
+    </details>
+
   </div>
 
-  <p class="foot">Tap a step to open the how-to · tap the circle on the right to check it off · progress saves on this device</p>
+  <p class="foot">
+    Tap any step to open the how-to · tap the circle to tick it off · your ticks save on this device, per month<br>
+    Press <b>Ctrl</b> / <b>⌘</b> + <b>P</b> to print or save as PDF
+  </p>
 </main>
 
 <script>
 (function(){
   "use strict";
-  var KEY = "trr-payroll-run-2026-v2";
-  var tasks = [].slice.call(document.querySelectorAll("li.task"));
-  var total = tasks.length;
-  var fill = document.getElementById("fill");
-  var pct = document.getElementById("pct");
-  var emoji = document.getElementById("emoji");
-  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var STORE   = "trr-payroll-run";
+  var tasks   = [].slice.call(document.querySelectorAll("li.task"));
+  var total   = tasks.length;
+  var fill    = document.getElementById("fill");
+  var pct     = document.getElementById("pct");
+  var emoji   = document.getElementById("emoji");
+  var monthIn = document.getElementById("month");
+  var reduce  = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var wasComplete = false;
 
-  function save(){
-    var s = tasks.map(function(t){ return t.classList.contains("done") ? 1 : 0; });
-    try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+  /* Ticks are stored per month, so starting a new month gives a clean list
+     without losing the record of the month before. */
+  function readStore(){
+    try{ return JSON.parse(localStorage.getItem(STORE)) || {}; }catch(e){ return {}; }
   }
-  function refresh(){
+  function writeStore(o){
+    try{ localStorage.setItem(STORE, JSON.stringify(o)); }catch(e){}
+  }
+  function monthKey(){
+    return (monthIn.value || "").trim().toLowerCase() || "_unset";
+  }
+  function save(){
+    var o = readStore();
+    o.lastMonth = (monthIn.value || "").trim();
+    o.months = o.months || {};
+    o.months[monthKey()] = tasks.map(function(t){ return t.classList.contains("done") ? 1 : 0; });
+    writeStore(o);
+  }
+  function refresh(silent){
     var n = tasks.filter(function(t){ return t.classList.contains("done"); }).length;
-    var p = Math.round(n/total*100);
+    var p = Math.round(n / total * 100);
     fill.style.width = p + "%";
     pct.textContent = p + "%";
-    emoji.textContent = p===100 ? "🎉" : p>=50 ? "👏" : "🚀";
-    if(p===100 && !wasComplete) celebrate();
-    wasComplete = (p===100);
+    emoji.textContent = p === 100 ? "🎉" : p >= 50 ? "👏" : "🚀";
+    if(p === 100 && !wasComplete && !silent) celebrate();
+    wasComplete = (p === 100);
   }
+  function load(){
+    var o = readStore();
+    var ticks = (o.months && o.months[monthKey()]) || [];
+    tasks.forEach(function(t, i){
+      var done = !!ticks[i];
+      t.classList.toggle("done", done);
+      t.querySelector(".mark").setAttribute("aria-pressed", done ? "true" : "false");
+    });
+    wasComplete = tasks.every(function(t){ return t.classList.contains("done"); });
+    refresh(true);
+  }
+
   tasks.forEach(function(t){
-    var row = t.querySelector(".row");
+    var row  = t.querySelector(".row");
     var mark = t.querySelector(".mark");
     row.addEventListener("click", function(){
       var open = t.classList.toggle("open");
@@ -406,38 +957,75 @@ ol.do li b{color:var(--ink);font-weight:650}
     });
     mark.addEventListener("animationend", function(){ mark.classList.remove("pop"); });
   });
-  try{
-    var saved = JSON.parse(localStorage.getItem(KEY) || "[]");
-    tasks.forEach(function(t,i){ if(saved[i]){ t.classList.add("done"); t.querySelector(".mark").setAttribute("aria-pressed","true"); } });
-  }catch(e){}
-  wasComplete = tasks.every(function(t){ return t.classList.contains("done"); });
-  refresh();
+
+  var startup = readStore();
+  monthIn.value = startup.lastMonth || "";
+  load();
+
+  var monthTimer;
+  monthIn.addEventListener("input", function(){
+    clearTimeout(monthTimer);
+    monthTimer = setTimeout(function(){
+      load();
+      var o = readStore();
+      o.lastMonth = (monthIn.value || "").trim();
+      writeStore(o);
+    }, 350);
+  });
 
   document.getElementById("restart").addEventListener("click", function(){
-    if(!confirm("Clear every tick and start a fresh month?")) return;
-    tasks.forEach(function(t){ t.classList.remove("done"); t.querySelector(".mark").setAttribute("aria-pressed","false"); });
-    wasComplete = false; save(); refresh();
+    var label = (monthIn.value || "").trim() || "this month";
+    if(!confirm("Clear every tick for " + label + "?")) return;
+    tasks.forEach(function(t){
+      t.classList.remove("done");
+      t.querySelector(".mark").setAttribute("aria-pressed", "false");
+    });
+    wasComplete = false;
+    save(); refresh(true);
+  });
+
+  /* Open the orientation panel the first time somebody opens this. */
+  if(!startup.seenBrief){
+    document.getElementById("brief").open = true;
+    var s = readStore(); s.seenBrief = 1; writeStore(s);
+  }
+
+  /* Filter the message list. */
+  var search = document.getElementById("bksearch");
+  var items  = [].slice.call(document.querySelectorAll("#bklist .bk"));
+  var nohit  = document.getElementById("bknohit");
+  search.addEventListener("input", function(){
+    var q = search.value.trim().toLowerCase();
+    var hits = 0;
+    items.forEach(function(it){
+      var match = !q || it.textContent.toLowerCase().indexOf(q) !== -1;
+      it.hidden = !match;
+      if(match){ hits++; }
+      if(q && match && q.length > 2){ it.open = true; }
+      if(!q){ it.open = false; }
+    });
+    nohit.hidden = hits > 0;
   });
 
   function celebrate(){
     if(reduce) return;
     var colors = ["#6A5AE0","#1B1450","#B7AEF3","#C4F04A","#FFFFFF"];
-    for(var i=0;i<70;i++){
+    for(var i = 0; i < 70; i++){
       (function(){
         var c = document.createElement("i");
         c.className = "confetti";
         c.style.background = colors[i % colors.length];
-        c.style.left = Math.random()*100 + "vw";
-        var dx = (Math.random()*2-1)*140;
-        var rot = Math.random()*720 - 360;
-        var dur = 2200 + Math.random()*1600;
+        c.style.left = Math.random() * 100 + "vw";
+        var dx  = (Math.random() * 2 - 1) * 140;
+        var rot = Math.random() * 720 - 360;
+        var dur = 2200 + Math.random() * 1600;
         c.style.opacity = "1";
-        if(Math.random()<.5) c.style.borderRadius = "50%";
+        if(Math.random() < .5) c.style.borderRadius = "50%";
         document.body.appendChild(c);
         c.animate([
           {transform:"translate(0,0) rotate(0deg)", opacity:1},
-          {transform:"translate("+dx+"px,"+(window.innerHeight+40)+"px) rotate("+rot+"deg)", opacity:1}
-        ], {duration:dur, easing:"cubic-bezier(.2,.6,.4,1)", delay:Math.random()*250}).onfinish = function(){ c.remove(); };
+          {transform:"translate(" + dx + "px," + (window.innerHeight + 40) + "px) rotate(" + rot + "deg)", opacity:1}
+        ], {duration:dur, easing:"cubic-bezier(.2,.6,.4,1)", delay:Math.random() * 250}).onfinish = function(){ c.remove(); };
       })();
     }
   }
